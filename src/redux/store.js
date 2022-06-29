@@ -26,9 +26,13 @@ const store = configureStore({
         contacts: persistReducer(itemsPersistConfig, contactsReducer),
     },
     middleware,
+    
     // devTools: process.env.NODE_ENV ==='development',
 })
 
 const persistor = persistStore(store);
 
+
+
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {store, persistor};
