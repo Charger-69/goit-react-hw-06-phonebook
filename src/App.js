@@ -1,45 +1,25 @@
-import { useState } from 'react';
 import Wrapper from "components/Wrapper";
 import Section from "components/Section";
 import ContactForm from 'components/ContactForm';
 import Filter from 'components/Filter';
 import ContactList from 'components/ContactList';
 import Notification from 'components/Notification';
-import useLocalStorage from 'hooks/useLocalStorage';
+import { useSelector } from 'react-redux';
+import { getItems } from "redux/contacts/contacts-selectors";
 
 function App() {
-    const [contacts, setContacts] = useLocalStorage('contacts', []);
-    const [filter, setFilter] = useState('');
-
-    const formSubmitHandler = data => {
-        if (contacts.find(contact => contact.name.toLowerCase() === data.name.toLowerCase())) {
-            setFilter('');
-            
-            return alert(`${data.name} is already in contacts`);
-        }
-
-        setContacts(prevState => [...prevState, data]);
-        setFilter('');
-    }
-
-    const handleFilterChange = event => {
-        setFilter(event.currentTarget.value);
-    };
-
-    const deleteContact = contactId => {
-        setContacts(prevState => prevState.filter(contact => contact.id !== contactId));
-    }
+    const contacts = useSelector(getItems);
 
     return (
         <Wrapper>
             <Section title={'Phonebook'}>
-                <ContactForm onSubmit={ formSubmitHandler }/>
+                <ContactForm />
             </Section>
 
             <Section title={'Contacts'}>
-                <Filter name={filter} onFilterChange={handleFilterChange} />
+                <Filter/>
                 {contacts.length > 0 ? (
-                    <ContactList data={contacts} filterName={filter} onDeleteContact={ deleteContact }/>
+                    <ContactList/>
                 ) : (
                     <Notification message="There are no contacts yet" />
                 )}

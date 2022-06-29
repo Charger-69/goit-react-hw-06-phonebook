@@ -1,30 +1,42 @@
-import {useState} from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import actions from '../../redux/contacts/contacts-actions';
+import { getItems, getFilter } from "redux/contacts/contacts-selectors";
 import Label from './Label';
 import InputName from './InputName';
 import InputNumber from './InputNumber';
 import Button from 'components/Button';
 import s from './ContactForm.module.css';
-import { nanoid } from 'nanoid'
 
-function ContactForm(props) {
-    const [id, setId] = useState(nanoid(6));
+function ContactForm() {
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
 
-    const handleIdChange = () => {
-        return setId(nanoid(6));
-    }
+    const contacts = useSelector(getItems);
+    const filterValue = useSelector(getFilter);
+    const dispatch = useDispatch();
+
+    // Function for setting contacts in store
+    const handleContactInfo = () => {
+        dispatch(actions.addContact(name, number));
+        if (filterValue !== '') {
+            dispatch(actions.changeFilter(''));
+        }
+    };
 
     const handleSubmit = event => {
         event.preventDefault();
 
-        handleIdChange();
+        if (contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())) {
+            if (filterValue !== '') {
+                dispatch(actions.changeFilter(''));
+            }
+            
+            return alert(`${name} is already in contacts`);
+        }
 
-        setTimeout(() => {
-            props.onSubmit({ id, name, number });
-
+        handleContactInfo();
         resetForm();
-        }, 10);
     };
 
     const handleChange = event => {
